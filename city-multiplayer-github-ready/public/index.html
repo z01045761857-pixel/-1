@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>도시의 한 사람 · 온라인</title>
+<style>
+:root{--bg:#101114;--p:#1b1d23;--p2:#242730;--line:#3a3d46;--tx:#e8e7e3;--muted:#a4a6ad;--gold:#c9aa70}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#28272a,#101114 65%);color:var(--tx);font-family:system-ui,"Noto Sans KR",sans-serif}
+.wrap{max-width:1150px;margin:auto;padding:22px 16px 50px}.head{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:18px;gap:10px}
+.kicker{font-size:10px;letter-spacing:.2em;color:var(--gold)}h1{font:36px Georgia,serif;margin:4px 0}.muted{color:var(--muted)}.small{font-size:12px}
+.tag{border:1px solid #655638;color:var(--gold);padding:7px 10px;font-size:10px}
+.panel{background:linear-gradient(145deg,#202229,#17191e);border:1px solid var(--line);padding:16px;margin-bottom:14px}h2{font-size:15px;color:#e5d5b4;margin:0 0 13px}
+input,button{font:inherit}input{width:100%;background:#111318;border:1px solid #555a64;color:var(--tx);padding:12px;margin:7px 0 12px}button{background:#30333c;color:var(--tx);border:1px solid #555a64;padding:10px 12px;cursor:pointer}button:hover{border-color:var(--gold);background:#41434b}.primary{background:#725d3b;border-color:#a58b5e}.full{width:100%}
+.lobby{max-width:470px;margin:7vh auto}.lobby .panel{padding:23px}.twocol{display:grid;grid-template-columns:1fr 1fr;gap:10px}.layout{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(270px,.8fr);gap:15px}
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.stat{background:#13151a;border:1px solid #343741;padding:9px}.stath{display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px}.bar{height:6px;background:#353842}.fill{height:100%;background:#c4a66d}
+.player{padding:10px;background:#15171c;border:1px solid #343741;margin-bottom:8px}.player strong{font-size:13px}.player .meta{font-size:11px;color:var(--muted);margin-top:4px}
+.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.actions button{text-align:left;font-size:12px}.actions span{display:block;color:#b5b6bb;font-size:10px;margin-top:4px}
+.event{background:#28241e;border:1px solid #695b40;padding:13px;line-height:1.65;font-size:13px}.log,.chatlog{max-height:280px;overflow:auto;display:flex;flex-direction:column;gap:7px}.line{background:#14161a;border-left:2px solid #796648;padding:8px 10px;font-size:12px;line-height:1.5}.line small{display:block;color:var(--gold);font-size:10px}
+.chatrow{display:flex;gap:6px}.chatrow input{margin:0}.chatrow button{white-space:nowrap}.hide{display:none!important}.error{color:#e39a91;font-size:12px;min-height:18px}.foot{text-align:center;color:#777;font-size:10px;margin-top:22px}
+@media(max-width:760px){.layout{grid-template-columns:1fr}.actions{grid-template-columns:1fr 1fr}.head{align-items:flex-start}.tag{font-size:9px}}
+</style></head><body><div class="wrap">
+<header class="head"><div><div class="kicker">SHARED CITY · MULTIPLAYER LIFE SIMULATION</div><h1>도시의 한 사람</h1><div class="muted small">각자의 삶, 하나의 도시. 누구도 세계의 중심은 아니다.</div></div><div class="tag">ONLINE PROTOTYPE 0.2</div></header>
+<section id="lobby" class="lobby"><div class="panel"><div class="kicker">ENTER THE CITY</div><h2 style="font-size:21px;margin-top:8px">도시에 접속하기</h2><label class="small muted">플레이어 이름</label><input id="name" maxlength="14" placeholder="이름을 입력하세요">
+<button class="primary full" id="create">새로운 방 만들기</button><div style="text-align:center;color:#777;margin:13px">또는</div><label class="small muted">방 코드</label><input id="roomCode" maxlength="6" placeholder="예: A1B2C3" style="text-transform:uppercase"><button class="full" id="join">방 코드로 입장</button><p id="error" class="error"></p><p class="small muted">한 방 최대 12명 · 접속자 모두 같은 사건과 날짜를 공유합니다.</p></div></section>
+<section id="game" class="hide"><div class="layout"><main>
+<div class="panel"><div style="display:flex;justify-content:space-between;gap:10px"><h2>공유 도시 기록</h2><span class="small muted" id="roomLabel"></span></div><div class="event" id="event"><b>도시의 소식</b><br>아직 사건이 없습니다.</div><div class="twocol" style="margin-top:10px"><button id="choice1">관여하기</button><button id="choice2">소문 조사하기</button></div><button id="choice3" class="full" style="margin-top:7px">무시하고 일상으로 돌아가기</button></div>
+<div class="panel"><div style="display:flex;justify-content:space-between"><h2>나의 인물 기록</h2><span class="small muted" id="day">1일차</span></div><div class="twocol"><div><div class="small muted">이름 / 나이</div><b id="myName">-</b> · <span id="myAge">18세</span></div><div><div class="small muted">출생지</div><b id="myRegion">-</b></div><div><div class="small muted">가정환경</div><b id="myHome">-</b></div><div><div class="small muted">재산</div><b id="myMoney">-</b></div></div><p class="small muted" id="myTier"></p><div class="cards" id="stats"></div></div>
+<div class="panel"><h2>오늘의 행동 <span class="muted small" id="remaining"></span></h2><div class="actions">
+<button data-action="work"><b>일하기</b><span>재산 증가</span></button><button data-action="study"><b>공부하기</b><span>지능 증가</span></button><button data-action="rest"><b>휴식하기</b><span>건강·정신력 회복</span></button><button data-action="social"><b>사람 만나기</b><span>인맥·평판 증가</span></button><button data-action="explore"><b>주변 둘러보기</b><span>소문과 정보</span></button><button data-action="exercise"><b>몸 단련하기</b><span>체력 증가</span></button></div><button id="advance" class="primary full" style="margin-top:12px">다음 날로 진행</button><p class="small muted">모든 접속자가 행동을 소진해야 날짜가 넘어갑니다.</p></div>
+<div class="panel"><h2>도시의 연대기</h2><div class="log" id="log"></div></div>
+</main><aside>
+<div class="panel"><h2>같은 도시에 있는 사람들</h2><div id="players"></div></div>
+<div class="panel"><h2>도시 채팅</h2><div id="chatlog" class="chatlog"></div><div class="chatrow" style="margin-top:9px"><input id="chatInput" maxlength="180" placeholder="메시지 입력"><button id="send">전송</button></div></div>
+<div class="panel"><h2>연결 정보</h2><div class="small muted" id="connection">서버에 연결됨</div><button id="copyCode" class="full" style="margin-top:9px">방 코드 복사</button><button id="leave" class="full" style="margin-top:7px">나가기</button></div>
+</aside></div></section><div class="foot">UNOFFICIAL FAN-MADE PROTOTYPE · 테스트용 서버 · 새로고침/서버 재시작 시 방 데이터가 초기화됩니다.</div></div>
+<script src="/socket.io/socket.io.js"></script><script>
+const socket=io();let myId=null,roomCode=null,latest=null;
+const $=id=>document.getElementById(id);
+const labels={health:"건강",mental:"정신력",intelligence:"지능",stamina:"체력",network:"인맥",reputation:"평판"};
+function error(t){$("error").textContent=t;setTimeout(()=>$("error").textContent="",4500)}
+$("create").onclick=()=>socket.emit("room:create",{name:$("name").value.trim()});
+$("join").onclick=()=>socket.emit("room:join",{name:$("name").value.trim(),code:$("roomCode").value.trim().toUpperCase()});
+socket.on("error:message",error);
+socket.on("room:joined",d=>{roomCode=d.code;myId=d.playerId;$("lobby").classList.add("hide");$("game").classList.remove("hide");$("roomLabel").textContent="ROOM "+roomCode;$("connection").textContent="실시간 연결 정상";});
+socket.on("room:update",render);
+socket.on("chat:message",m=>{const el=document.createElement("div");el.className="line";const tm=new Date(m.at).toLocaleTimeString("ko-KR",{hour:"2-digit",minute:"2-digit"});el.innerHTML=`<small>${tm} · </small>`;const b=document.createElement("b");b.textContent=m.name+": ";const t=document.createElement("span");t.textContent=m.text;el.append(b,t);$("chatlog").append(el);$("chatlog").scrollTop=$("chatlog").scrollHeight;});
+function render(r){latest=r;const me=r.players.find(p=>p.id===myId);$("day").textContent=r.day+"일차";$("event").innerHTML=`<b>${r.event?.title||"도시의 소식"}</b><br>${r.event?.text||"아직 사건이 없습니다."}<div class="small muted" style="margin-top:7px">사건 변화 단계: ${r.event?.progress||0}</div>`;
+$("players").innerHTML="";r.players.forEach(p=>{const d=document.createElement("div");d.className="player";const b=document.createElement("strong");b.textContent=p.name+(p.id===myId?" (나)":"");const m=document.createElement("div");m.className="meta";m.textContent=`${p.region} · ${p.age}세 · 남은 행동 ${p.actions}`;d.append(b,m);$("players").append(d);});
+$("log").innerHTML="";r.log.forEach(x=>{const d=document.createElement("div");d.className="line";const sm=document.createElement("small");sm.textContent=`${x.day}일차 · ${x.type}`;const t=document.createElement("div");t.textContent=x.text;d.append(sm,t);$("log").append(d);});
+if(me){$("myName").textContent=me.name;$("myAge").textContent=me.age+"세";$("myRegion").textContent=me.region;$("myHome").textContent=me.home;$("myMoney").textContent=me.money+"안";$("myTier").textContent=me.tier;$("remaining").textContent=`남은 행동 ${me.actions}/3`;$("stats").innerHTML="";Object.entries(me.stats).forEach(([k,v])=>{const d=document.createElement("div");d.className="stat";d.innerHTML=`<div class="stath"><b>${labels[k]}</b><strong>${v}</strong></div><div class="bar"><div class="fill" style="width:${v}%"></div></div>`;$("stats").append(d);});document.querySelectorAll("[data-action]").forEach(b=>b.disabled=me.actions<=0);}
+const allDone=r.players.length>0&&r.players.every(p=>p.actions===0);$("advance").disabled=!allDone;
+}
+document.querySelectorAll("[data-action]").forEach(b=>b.onclick=()=>socket.emit("player:action",{action:b.dataset.action}));
+$("choice1").onclick=()=>socket.emit("event:choice",{choice:"관여하기"});$("choice2").onclick=()=>socket.emit("event:choice",{choice:"소문을 조사하기"});$("choice3").onclick=()=>socket.emit("event:choice",{choice:"무시하기"});
+$("advance").onclick=()=>socket.emit("day:advance");
+function send(){const t=$("chatInput").value.trim();if(t){socket.emit("chat:send",{text:t});$("chatInput").value="";}}
+$("send").onclick=send;$("chatInput").addEventListener("keydown",e=>{if(e.key==="Enter")send();});
+$("copyCode").onclick=async()=>{try{await navigator.clipboard.writeText(roomCode);$("connection").textContent="방 코드가 복사되었습니다."}catch(e){$("connection").textContent="방 코드: "+roomCode}};
+$("leave").onclick=()=>location.reload();
+socket.on("disconnect",()=>$("connection").textContent="연결이 끊겼습니다. 새로고침해 다시 접속하세요.");
+</script></body></html>
